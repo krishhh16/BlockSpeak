@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
 
     const transactions = await tryFetchquery(publicKey);
 
-    console.log(transactions, `for the query ${query}`)
+    transactions?.map((txn, i) => {
+        console.log(`${i}. ${txn?.transaction.message}`)
+    })
 
     return NextResponse.json({transactions});
     
