@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const transactions = await tryFetchquery(publicKey);
     const llmInvoke = await llm.invoke([
-        { role: "user", content: "I have a JSON object with details about the web3 transactions I've performed." },
+        { role: "user", content: "I have a JSON object with details about the web3 transactions I've performed. Note: Only return answer in an JSON array of object, containing suitable information regarding the transaction that I want to query, that can then be used in the frontend, also, if you don't have anything, just return null" },
         { role: "assistant", content: "Got it! How can I assist you with your transaction data?" },
         { role: "user", content: `How many transactions are there where I've received 5 SOL?
     My public key is '${publicKey}'., here's the list of transactions: [
@@ -357,16 +357,14 @@ export async function POST(req: NextRequest) {
         "2Ae5NjME4i5Z5RAKhjDFUZsTXB79AWan9XrKPhuYsq9XgYWUNAFKW8Y651F6aKDLA6HeHUszehwtQuJoWdhP1mXf"
       ]
     }
-  }
-]` },
-        { role: "assistant", content: '[{"transaction_id": "tx_2","amount_received": 5},{"transaction_id": "tx_3","amount_received": 5},{"transaction_id": "tx_4","amount_received": 5},{"transaction_id": "tx_5","amount_received": 5}]'},
+  }]` },
+        { role: "assistant", content: '[{"value": 5, "label": "Received amount"},{"value": 5, "label": "Received amount"},{"value": 5, "label": "Received amount"},{"value": 5, "label": "Received amount"}]'},
         {role: "user", content: `${query}, here's my public key: ${publicKey}, and here's my transaction history ${JSON.stringify(transactions, null, 2)}`}
     ]);
 
     console.log(llmInvoke.content)
 
-    return NextResponse.json({ transactions });
-
+    return NextResponse.json({ aiRes: llmInvoke.content });
 }
 
 
